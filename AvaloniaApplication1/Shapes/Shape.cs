@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media;
+using Avalonia;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,22 +12,17 @@ namespace AvaloniaApplication1.Shapes
     {
         protected int x, y;
         protected static int r;
-        protected string color;
 
-        public Shape(int x, int y, string color)
+        public Shape(int x, int y)
         {
             this.x = x;
             this.y = y;
-            this.color = color;
         }
         static Shape()
         {
-            r = 0;
+            r = 52;
         }
 
-        public void Draw(DrawingContext dc)
-        {
-
-        }
+        public abstract void Draw(DrawingContext dc);
     }
 }
