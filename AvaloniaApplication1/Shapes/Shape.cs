@@ -18,6 +18,9 @@ namespace AvaloniaApplication1.Shapes
             this.x = x;
             this.y = y;
         }
+        public int R{
+            get => r;
+        }
         static Shape()
         {
             r = 52;

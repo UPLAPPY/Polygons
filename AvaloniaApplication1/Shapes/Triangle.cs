@@ -20,19 +20,18 @@ namespace AvaloniaApplication1.Shapes
             Pen pen = new Pen(Brushes.Black, 5, lineCap: PenLineCap.Square);
             Brush brush = new SolidColorBrush(Colors.Yellow);
 
-            Point down_left_point = new Point(x - (r / Math.Sqrt(3)), y - (r / 3));
-            Point up_point = new Point(x, y + (2 * r / 3));
-            Point down_right_point = new Point(x + (r / Math.Sqrt(3)), y - (r / 3));
+            double delta_x = Math.Sqrt(3) * r / 2;
+            double delta_y = r / 2;
 
-
-            var geometry = new StreamGeometry();
-            using (var geometryContext = geometry.Open())
+            Point[] points = new Point[4]
             {
-                geometryContext.BeginFigure(down_right_point, true);
-                geometryContext.LineTo(up_point, true);
-                geometryContext.LineTo(down_left_point, true);
-                geometryContext.EndFigure(true);
-            }
+            new Point(x, y - r),
+            new Point(x + delta_x, y + delta_y),
+            new Point(x - delta_x, y + delta_y),
+            new Point(x, y - r)
+            };
+
+            PolylineGeometry geometry = new PolylineGeometry(points, true);
 
             dc.DrawGeometry(brush, pen, geometry);
         }

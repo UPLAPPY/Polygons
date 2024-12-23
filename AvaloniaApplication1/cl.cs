@@ -6,18 +6,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Avalonia;
+using AvaloniaApplication1.Shapes;
 
 namespace AvaloniaApplication1
 {
     public class CustomControl : UserControl
     {
-        public override void Render(DrawingContext context)
+        public override void Render(DrawingContext drawingContext)
         {
-            Pen pen = new Pen(Brushes.Green, 1, lineCap: PenLineCap.Square);
-            Brush brush = new SolidColorBrush(Colors.Black);
+            Square square = new Square(300, 500);
+            square.Draw(drawingContext);
 
-            context.DrawEllipse(brush, pen, new Point(100, 100), 10, 10);
-            Console.WriteLine("Drawing");
+            Circle circle = new Circle(600, 500);
+            circle.Draw(drawingContext);
+
+            Triangle triangle = new Triangle(900, 500);
+            triangle.Draw(drawingContext);
         }
     }
 }
