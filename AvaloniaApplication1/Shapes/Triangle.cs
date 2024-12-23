@@ -17,18 +17,18 @@ namespace AvaloniaApplication1.Shapes
 
         public override void Draw(DrawingContext dc)
         {
-            Pen pen = new Pen(Brushes.Black, 5, lineCap: PenLineCap.Square);
+            Pen pen = new Pen(Brushes.Black, 2, lineCap: PenLineCap.Square);
             Brush brush = new SolidColorBrush(Colors.Yellow);
 
-            double delta_x = Math.Sqrt(3) * r / 2;
+            double delta_x = r / 2 * Math.Sqrt(3);
             double delta_y = r / 2;
 
-            Point[] points = new Point[4]
+            Point[] points = 
             {
-            new Point(x, y - r),
-            new Point(x + delta_x, y + delta_y),
-            new Point(x - delta_x, y + delta_y),
-            new Point(x, y - r)
+                new Point(x, y - r),
+                new Point(x + delta_x, y + delta_y),
+                new Point(x - delta_x, y + delta_y),
+                new Point(x, y - r)
             };
 
             PolylineGeometry geometry = new PolylineGeometry(points, true);

@@ -16,7 +16,7 @@ namespace AvaloniaApplication1.Shapes
 
         public override void Draw(DrawingContext dc)
         {
-            Pen pen = new Pen(Brushes.Black, 5, lineCap: PenLineCap.Square);
+            Pen pen = new Pen(Brushes.Black, 2, lineCap: PenLineCap.Square);
             Brush brush = new SolidColorBrush(Colors.Yellow);
             dc.DrawEllipse(brush, pen, new Point(x, y), r, r);
         }
