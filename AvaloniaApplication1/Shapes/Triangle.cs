@@ -25,10 +25,10 @@ namespace AvaloniaApplication1.Shapes
 
             Point[] points = new Point[4]
             {
-            new Point(x, y - r),
-            new Point(x + delta_x, y + delta_y),
-            new Point(x - delta_x, y + delta_y),
-            new Point(x, y - r)
+                new Point(x, y - r),
+                new Point(x + delta_x, y + delta_y),
+                new Point(x - delta_x, y + delta_y),
+                new Point(x, y - r)
             };
 
             PolylineGeometry geometry = new PolylineGeometry(points, true);
