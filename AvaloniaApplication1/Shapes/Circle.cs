@@ -20,5 +20,14 @@ namespace AvaloniaApplication1.Shapes
             Brush brush = new SolidColorBrush(Colors.Yellow);
             dc.DrawEllipse(brush, pen, new Point(x, y), r, r);
         }
+
+        public override bool isInside(int xp, int yp)
+        {
+            if(Math.Pow(this.x - x, 2) + Math.Pow(this.y - y, 2) <= Math.Pow(R, 2))
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

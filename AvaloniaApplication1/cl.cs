@@ -12,7 +12,7 @@ namespace AvaloniaApplication1
 {
     public class CustomControl : UserControl
     {
-        private double cx, cy;
+        private int cx, cy;
         public override void Render(DrawingContext drawingContext)
         {
             Square square = new Square(100, 100);
@@ -25,11 +25,28 @@ namespace AvaloniaApplication1
             triangle.Draw(drawingContext);
         }
 
-        public void Click(double X, double Y)
+        public void Click(int X, int Y)
         {
-            cx = X;
-            cy = Y;
+            this.cx = X; 
+            this.cy = Y;
+
+            //foreach (Shape s in l)
+            //{
+            //    if (s.isInside(cx, cy))
+            //    {
+                    
+            //    }
+            //}
         }
 
+        public void Drag()
+        {
+
+        }
+
+        public void Drop() 
+        { 
+            
+        }
     }
 }

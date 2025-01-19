@@ -10,10 +10,11 @@ namespace AvaloniaApplication1.Shapes
 {
     abstract class Shape
     {
-        protected int x, y;
+        protected double x, y;
         protected static int r;
+        bool in_moving = false;
 
-        public Shape(int x, int y)
+        public Shape(double x, double y)
         {
             this.x = x;
             this.y = y;
@@ -26,6 +27,9 @@ namespace AvaloniaApplication1.Shapes
             r = 52;
         }
 
+
         public abstract void Draw(DrawingContext dc);
+
+        public abstract bool isInside(int xp, int yp);
     }
 }

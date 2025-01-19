@@ -6,6 +6,8 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="AvaloniaApplication1.MainWindow"
         Title="AvaloniaApplication1"
-		PointerPressed="Window_PointerPressed">
+		PointerPressed="Window_PointerPressed"
+		PointerMoved="Window_PointerMoved"
+		PointerReleased="Window_PointerReleased">
 	<avaloniaapp:CustomControl Name ="myCC"/>
 </Window>
