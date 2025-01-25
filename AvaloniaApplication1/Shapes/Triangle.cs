@@ -7,15 +7,17 @@ using Avalonia;
 using Avalonia.Media;
 
 
-namespace AvaloniaApplication1
+namespace AvaloniaApplication1.Shapes
 {
     class Triangle : Shape
     {
         private Point point1, point2, point3;
-        
 
-        public Triangle(int x, int y) : base(x, y)
+        public Triangle(double x, double y) : base(x, y)
         {
+            point1 = new Point(x, y - r);
+            point2 = new Point(x + r / 2 * Math.Sqrt(3), y + r / 2);
+            point3 = new Point(x - r / 2 * Math.Sqrt(3), y + r / 2);
         }
 
         public override void Draw(DrawingContext dc)
@@ -23,11 +25,11 @@ namespace AvaloniaApplication1
             Pen pen = new Pen(Brushes.Black, 2, lineCap: PenLineCap.Square);
             Brush brush = new SolidColorBrush(Colors.Yellow);
 
-            point1 = new Point(x, y - r);
-            point2 = new Point(x + (r / 2 * Math.Sqrt(3)), y + r / 2);
-            point3 = new Point(x - (r / 2 * Math.Sqrt(3)), y + r / 2);
+            double delta_x = r / 2 * Math.Sqrt(3);
+            double delta_y = r / 2;
 
-            Point[] points =
+
+            Point[] points = 
             {
                 point1,
                 point2,
@@ -48,7 +50,7 @@ namespace AvaloniaApplication1
             double area2 = CalculateArea(point1.X, point1.Y, xp, yp, point3.X, point3.Y);
             double area3 = CalculateArea(point1.X, point1.Y, point2.X, point2.Y, xp, yp);
 
-            return Math.Abs(area1 + area2 + area3 - triangleArea) < 0.1;
+            return Math.Abs((area1 + area2 + area3) - triangleArea) < 1e-6;
         }
 
         static double CalculateArea(double x1, double y1, double x2, double y2, double x3, double y3)

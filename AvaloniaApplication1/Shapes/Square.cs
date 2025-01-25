@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Media;
 
-namespace AvaloniaApplication1
+namespace AvaloniaApplication1.Shapes
 {
     class Square : Shape
     {
@@ -18,14 +18,22 @@ namespace AvaloniaApplication1
         {
             Pen pen = new Pen(Brushes.Black, 2, lineCap: PenLineCap.Square);
             Brush brush = new SolidColorBrush(Colors.Green);
-            double delta = R * Math.Sqrt(2) / 2;
-            dc.DrawRectangle(brush, pen, new Rect(new Point(x - delta, y - delta), new Size(2*delta, 2*delta)));
+            dc.DrawRectangle(brush, pen, new Rect(new Point(x, y - r), new Size(2 * r, 2 * r)));
         }
 
         public override bool isInside(int xp, int yp)
         {
-            double delta = R * Math.Sqrt(2) / 2;
-            if ((Math.Abs(x - xp) <= delta) & (Math.Abs(y - yp) <= delta)){
+            //double xc = Convert.ToDouble(this.x);
+            //double yc = Convert.ToDouble(this.y);
+
+            double xl = this.x - r / 2;
+            double xr = this.x + r / 2;
+            double yv = this.y + r / 2;
+            double yn = this.y - r / 2;
+
+            if (( xp >= xl && xp <= xr) && ( yp <= yv && yp >= yn))
+            {
+                Console.WriteLine("yes");
                 return true;
             }
             return false;
