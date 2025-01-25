@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Avalonia;
 
-namespace AvaloniaApplication1.Shapes
+namespace AvaloniaApplication1
 {
     class Circle : Shape
     {
@@ -23,7 +23,7 @@ namespace AvaloniaApplication1.Shapes
 
         public override bool isInside(int xp, int yp)
         {
-            if(Math.Pow(this.x - x, 2) + Math.Pow(this.y - y, 2) <= Math.Pow(R, 2))
+            if (Math.Pow(x - xp, 2) + Math.Pow(y - yp, 2) <= Math.Pow(R, 2))
             {
                 return true;
             }
