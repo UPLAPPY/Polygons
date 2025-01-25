@@ -20,7 +20,7 @@ namespace AvaloniaApplication1
         {
             this.x = x;
             this.y = y;
-        }
+        } 
         public int R
         {
             get => r;
