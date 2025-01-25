@@ -5,23 +5,38 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
-namespace AvaloniaApplication1.Shapes
+namespace AvaloniaApplication1
 {
     abstract class Shape
     {
-        protected double x, y;
+        public int x, y;
         protected static int r;
-        bool in_moving = false;
+        public bool is_moving = false;
+        private int dx, dy;
 
-        public Shape(double x, double y)
+        public Shape(int x, int y)
         {
             this.x = x;
             this.y = y;
         }
-        public int R{
+        public int R
+        {
             get => r;
         }
+        public int DX
+        {
+            get { return dx; }
+            set { dx = value; }
+        }
+
+        public int DY
+        {
+            get { return dy; }
+            set { dy = value; }
+        }
+
         static Shape()
         {
             r = 52;
