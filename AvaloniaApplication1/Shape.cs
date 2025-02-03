@@ -15,6 +15,7 @@ namespace AvaloniaApplication1
         protected static int r;
         public bool is_moving = false;
         private int dx, dy;
+        public bool is_vertex = false;
 
         public Shape(int x, int y)
         {
@@ -43,7 +44,7 @@ namespace AvaloniaApplication1
         }
 
 
-        public abstract void Draw(DrawingContext dc);
+        public abstract void Draw(DrawingContext dc, Pen pen, Brush brush);
 
         public abstract bool isInside(int xp, int yp);
     }

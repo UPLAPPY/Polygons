@@ -18,10 +18,8 @@ namespace AvaloniaApplication1
         {
         }
 
-        public override void Draw(DrawingContext dc)
+        public override void Draw(DrawingContext dc, Pen pen, Brush brush)
         {
-            Pen pen = new Pen(Brushes.Black, 2, lineCap: PenLineCap.Square);
-            Brush brush = new SolidColorBrush(Colors.Yellow);
 
             point1 = new Point(x, y - r);
             point2 = new Point(x + (r / 2 * Math.Sqrt(3)), y + r / 2);

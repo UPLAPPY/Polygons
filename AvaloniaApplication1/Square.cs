@@ -14,10 +14,8 @@ namespace AvaloniaApplication1
         {
         }
 
-        public override void Draw(DrawingContext dc)
+        public override void Draw(DrawingContext dc, Pen pen, Brush brush)
         {
-            Pen pen = new Pen(Brushes.Black, 2, lineCap: PenLineCap.Square);
-            Brush brush = new SolidColorBrush(Colors.Green);
             double delta = R * Math.Sqrt(2) / 2;
             dc.DrawRectangle(brush, pen, new Rect(new Point(x - delta, y - delta), new Size(2*delta, 2*delta)));
         }
