@@ -9,6 +9,8 @@ using Avalonia;
 using System.Diagnostics.Metrics;
 using System.Drawing;
 using System.Security.Cryptography;
+using Avalonia.Controls.Shapes;
+using System.Threading;
 
 namespace AvaloniaApplication1
 {
@@ -17,6 +19,8 @@ namespace AvaloniaApplication1
         private int cx, cy, counter = 0;
         List<Shape> shapes = new List<Shape>();
         List<Avalonia.Point> borders = new List<Avalonia.Point>();
+        private string _shape = "Triangle";
+        private bool _menupressed = false;
 
         Pen pen = new Pen(Brushes.Green, 2, lineCap: PenLineCap.Square);
         Brush brush = new SolidColorBrush(Colors.Green);
@@ -144,7 +148,7 @@ namespace AvaloniaApplication1
             }
         }
 
-        public void RightClick(int X, int Y)
+        public void LeftClick(int X, int Y)
         {
             this.cx = X; 
             this.cy = Y;
@@ -161,15 +165,27 @@ namespace AvaloniaApplication1
             }
             if (counter == 0)
             {
-                Triangle s = new Triangle(cx, cy);
-                shapes.Add(s);
+                switch (_shape)
+                {
+                    case "Triangle":
+                        shapes.Add(new Triangle(cx, cy));
+                        break;
+                    case "Square":
+                        shapes.Add(new Square(cx, cy));
+                        break;
+                    case "Circle":
+                        shapes.Add(new Circle(cx, cy));
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
             }
 
             InvalidateVisual();
             counter = 0;
         }
 
-        public void LeftClick(int X, int Y)
+        public void RightClick(int X, int Y)
         {
             shapes.Reverse();
             int delete_index = -1;
@@ -210,6 +226,11 @@ namespace AvaloniaApplication1
             {
                 shape.is_moving = false;
             }
+        }
+        
+        public void SetShape(string menuShape)
+        {
+            _shape = menuShape;
         }
     }
 }
