@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using SkiaSharp;
 
 namespace AvaloniaApplication1
 {
@@ -43,9 +44,7 @@ namespace AvaloniaApplication1
             r = 52;
         }
 
-
         public abstract void Draw(DrawingContext dc, Pen pen, Brush brush);
-
         public abstract bool isInside(int xp, int yp);
     }
 }

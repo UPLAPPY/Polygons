@@ -4,6 +4,7 @@ using System;
 using Avalonia.Interactivity;
 using System.Threading.Tasks;
 using Avalonia.Input;
+using Avalonia.Rendering.Composition;
 
 namespace AvaloniaApplication1
 {
@@ -15,6 +16,7 @@ namespace AvaloniaApplication1
         {
             InitializeComponent();
         }
+
 
         private void MenuClicked(object? sender, RoutedEventArgs e)
         {

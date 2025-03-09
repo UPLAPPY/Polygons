@@ -2,235 +2,283 @@
 using Avalonia.Media;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Avalonia;
-using System.Diagnostics.Metrics;
-using System.Drawing;
-using System.Security.Cryptography;
-using Avalonia.Controls.Shapes;
-using System.Threading;
 
 namespace AvaloniaApplication1
 {
     public class CustomControl : UserControl
     {
-        private int cx, cy, counter = 0;
-        List<Shape> shapes = new List<Shape>();
-        List<Avalonia.Point> borders = new List<Avalonia.Point>();
+        private int cx, cy;
+        private List<Shape> _shapes = new List<Shape>();
+        private List<Shape[]> _borders = new List<Shape[]>();
         private string _shape = "Triangle";
-        private bool _menupressed = false;
 
-        Pen pen = new Pen(Brushes.Green, 2, lineCap: PenLineCap.Square);
-        Brush brush = new SolidColorBrush(Colors.Green);
+        private Pen pen = new Pen(Brushes.Green, 2, lineCap: PenLineCap.Square);
+        private Brush brush = new SolidColorBrush(Colors.Green);
+
         public override void Render(DrawingContext drawingContext)
         {
-            borders.Clear();
-            foreach (Shape s in shapes)
+            _borders.Clear();
+            foreach (Shape s in _shapes)
             {
                 s.Draw(drawingContext, pen, brush);
                 s.is_vertex = false;
             }
 
-            if (shapes.Count < 3)
+            if (_shapes.Count < 3)
             {
                 return;
             }
 
-            for (int i = 0; i < shapes.Count - 1; i++)
+            Jarvis();
+
+            foreach (Shape[] line in _borders)
             {
-                for (int j = i + 1; j < shapes.Count; j++)
-                {
-                    Shape p1 = shapes[i];
-                    Shape p2 = shapes[j];
-                    bool allAbove = true;
-                    bool allBelow = true;
-                    if (p1.y == p2.y)
-                    {
-                        for (int z = 0; z < shapes.Count; z++)
-                        {
-                            if (z == i || z == j)
-                            {
-                                continue;
-                            }
-
-                            Shape point = shapes[z];
-
-                            if (p1.y > point.y)
-                            {
-                                allBelow = false;
-                            }
-                            else if (p1.y < point.y)
-                            {
-                                allAbove = false;
-                            }
-                            else
-                            {
-                                allAbove = false;
-                                allBelow = false;
-                            }
-                        }
-                    }
-
-                    if (p1.x == p2.x)
-                    {
-                        for (int z = 0; z < shapes.Count; z++)
-                        {
-                            if (z == i || z == j)
-                            {
-                                continue;
-                            }
-
-                            Shape point = shapes[z];
-
-                            if (p1.x > point.x)
-                            {
-                                allBelow = false;
-                            }
-                            else if (p1.x < point.x)
-                            {
-                                allAbove = false;
-                            }
-                            else
-                            {
-                                allAbove = false;
-                                allBelow = false;
-                            }
-                        }
-                    }
-
-                    else
-                    {
-                        double k = ((double)p2.y - p1.y) / (p2.x - p1.x);
-                        double b = p1.y - k * p1.x;
-
-                        for (int z = 0; z < shapes.Count; z++)
-                        {
-                            if (z == i || z == j)
-                            {
-                                continue;
-                            }
-
-                            Shape point = shapes[z];
-                            double y2 = k * point.x + b;
-
-                            if (y2 > point.y)
-                            {
-                                allBelow = false;
-                            }
-                            else if (y2 < point.y)
-                            {
-                                allAbove = false;
-                            }
-                            else
-                            {
-                                allAbove = false;
-                                allBelow = false;
-                            }
-                        }
-                    }
-                    
-
-                    if (allAbove || allBelow)
-                    {
-                        p1.is_vertex = true;
-                        p2.is_vertex = true;
-                        borders.Add(new Avalonia.Point(p1.x, p1.y));
-                        borders.Add(new Avalonia.Point(p2.x, p2.y));
-                    }
-                }
+                drawingContext.DrawLine(pen, new Point(line[0].x, line[0].y), new Point(line[1].x, line[1].y));
             }
+            RemoveInside();
+        }
 
-            for (int i = 0; i < borders.Count; i += 2)
+        private void Jarvis()
+        {
+            int constA = FindA();
+            int A = constA;
+
+            int B = 0;
+            int C = 0;
+
+            Shape tempShape = new Triangle(_shapes[A].x + 100, _shapes[A].y);
+            C = FindCos(_shapes[A], tempShape);
+
+            _borders.Add([_shapes[A], _shapes[C]]);
+            _shapes[A].is_vertex = true;
+            _shapes[C].is_vertex = true;
+            B = A;
+            A = C;
+
+            int index = 1;
+            while (index < _shapes.Count)
             {
-                drawingContext.DrawLine(pen, borders[i], borders[i + 1]);
+                C = FindCos(_shapes[A], _shapes[B]);
+                _shapes[C].is_vertex = true;
+                _borders.Add([_shapes[A], _shapes[C]]);
+
+                B = A;
+                A = C;
+                index++;
             }
         }
 
-        public void LeftClick(int X, int Y)
+        private int FindA()
         {
-            this.cx = X; 
-            this.cy = Y;
+            Shape A = null;
+            foreach (Shape shape in _shapes)
+            {
+                if (A is null)
+                {
+                    A = shape;
+                }
+                else
+                {
+                    if (shape.y > A.y)
+                    {
+                        A = shape;
+                    }
+                    else if (shape.y == A.y)
+                    {
+                        if (shape.x > A.x)
+                        {
+                            A = shape;
+                        }
+                    }
+                }
+            }
+            return _shapes.IndexOf(A);
+        }
 
-            foreach (Shape s in shapes)
+        private int FindCos(Shape A, Shape B)
+        {
+            double maxCos = 2;
+            Shape point = null;
+
+            foreach (Shape s in _shapes)
+            {
+                if (point is null)
+                {
+                    point = s;
+                }
+                if (s != A && s != B)
+                {
+                    double AC = Math.Sqrt(Math.Pow((A.x - s.x), 2) + Math.Pow((A.y - s.y), 2));
+                    double AB = Math.Sqrt(Math.Pow((B.x - A.x), 2) + Math.Pow((B.y - A.y), 2));
+                    double nowCos = ((s.x - A.x) * (B.x - A.x) + (s.y - A.y) * (B.y - A.y)) / (AB * AC);
+
+                    if (nowCos < maxCos)
+                    {
+                        maxCos = nowCos;
+                        point = s;
+                    }
+                    else if (nowCos == maxCos)
+                    {
+                        double distCurrent = Math.Pow((point.x - A.x), 2) + Math.Pow((point.y - A.y), 2);
+                        double distNew = Math.Pow((s.x - A.x), 2) + Math.Pow((s.y - A.y), 2);
+
+                        if (distNew > distCurrent)
+                        {
+                            point = s;
+                        }
+                    }
+                }
+            }
+            return _shapes.IndexOf(point);
+        }
+
+        
+        
+        
+        public void LeftClick(int x, int y)
+        {
+            this.cx = x;
+            this.cy = y;
+            bool outsideShape = false;
+            foreach (Shape s in _shapes)
             {
                 if (s.isInside(cx, cy))
                 {
-                    counter++;
                     s.is_moving = true;
                     s.DX = cx - s.x;
                     s.DY = cy - s.y;
+                    outsideShape = true;
                 }
             }
-            if (counter == 0)
+            if (!outsideShape)
             {
-                switch (_shape)
+                bool inside = InsideShell(x, y);
+                if (inside)
                 {
-                    case "Triangle":
-                        shapes.Add(new Triangle(cx, cy));
-                        break;
-                    case "Square":
-                        shapes.Add(new Square(cx, cy));
-                        break;
-                    case "Circle":
-                        shapes.Add(new Circle(cx, cy));
-                        break;
-                    default:
-                        throw new NotImplementedException();
+                    foreach (Shape s in _shapes)
+                    {
+                        s.is_moving = true;
+                        s.DX = cx - s.x; 
+                        s.DY = cy - s.y;
+                    }
+                }
+                else
+                {
+                    switch (_shape)
+                    {
+                        case "Triangle":
+                            _shapes.Add(new Triangle(cx, cy));
+                            break;
+                        case "Square":
+                            _shapes.Add(new Square(cx, cy));
+                            break;
+                        case "Circle":
+                            _shapes.Add(new Circle(cx, cy));
+                            break;
+                        default:
+                            throw new NotImplementedException();
+                    }
                 }
             }
 
             InvalidateVisual();
-            counter = 0;
+        }
+        public bool InsideShell(int x, int y)
+        {
+            bool inside = false;
+            foreach (Shape[] line in _borders)
+            {
+                Point p1 = new Point(line[0].x, line[0].y);
+                Point p2 = new Point(line[1].x, line[1].y);
+
+                if (y >= Math.Min(p1.Y, p2.Y))
+                {
+                    if (y <= Math.Max(p1.Y, p2.Y))
+                    {
+                        if (x <= Math.Max(p1.X, p2.X))
+                        {
+                            double interX = (y - p1.Y) * (p2.X - p1.X) / (p2.Y - p1.Y) + p1.X;
+
+                            if (Convert.ToInt32(p1.X) == Convert.ToInt32(p2.X) || x <= interX)
+                            {
+                                inside = !inside;
+                            }
+                        }
+                    }
+                }
+            }
+            return inside;
         }
 
-        public void RightClick(int X, int Y)
+
+
+
+        public void RightClick(int x, int y)
         {
-            shapes.Reverse();
+            _shapes.Reverse();
             int delete_index = -1;
-            foreach (Shape s in shapes)
+            foreach (Shape s in _shapes)
             {
-                if (s.isInside(X, Y))
+                if (s.isInside(x, y))
                 {
-                    delete_index = shapes.IndexOf(s);
+                    delete_index = _shapes.IndexOf(s);
                     break;
                 }
             }
             if (delete_index != -1)
             {
-                shapes.RemoveAt(delete_index);
+                _shapes.RemoveAt(delete_index);
             }
-            shapes.Reverse();
+            _shapes.Reverse();
 
             InvalidateVisual();
         }
 
-        public void Drag(int X, int Y)
+
+
+        public void Drag(int x, int y)
         {
-            foreach (Shape s in shapes)
+            foreach (Shape s in _shapes)
             {
                 if (s.is_moving)
                 {
-                    s.x = X - s.DX;
-                    s.y = Y - s.DY;
+                    s.x = x - s.DX;
+                    s.y = y - s.DY;
                 }
             }
 
             InvalidateVisual();
         }
 
-        public void Drop() 
+        public void Drop()
         {
-            foreach (Shape shape in shapes)
+            foreach (Shape shape in _shapes)
             {
                 shape.is_moving = false;
             }
         }
-        
+
         public void SetShape(string menuShape)
         {
             _shape = menuShape;
+        }
+
+        private void RemoveInside()
+        {
+            List<Shape> remove = new List<Shape>();
+            foreach (Shape polygon in _shapes)
+            {
+                if (!polygon.is_vertex)
+                {
+                    remove.Add(polygon);
+                }
+            }
+
+            foreach (Shape polygon in remove)
+            {
+                _shapes.Remove(polygon);
+            }
         }
     }
 }
