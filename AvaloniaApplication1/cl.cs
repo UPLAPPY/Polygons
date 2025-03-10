@@ -3,6 +3,8 @@ using Avalonia.Media;
 using System;
 using System.Collections.Generic;
 using Avalonia;
+using Avalonia.Controls.Converters;
+using Avalonia.Controls.Shapes;
 
 namespace AvaloniaApplication1
 {
@@ -12,6 +14,7 @@ namespace AvaloniaApplication1
         private List<Shape> _shapes = new List<Shape>();
         private List<Shape[]> _borders = new List<Shape[]>();
         private string _shape = "Triangle";
+        private string _alg = "Jarvis";
 
         private Pen pen = new Pen(Brushes.Green, 2, lineCap: PenLineCap.Square);
         private Brush brush = new SolidColorBrush(Colors.Green);
@@ -30,13 +33,135 @@ namespace AvaloniaApplication1
                 return;
             }
 
-            Jarvis();
+
+
+            ConvexHull();
 
             foreach (Shape[] line in _borders)
             {
                 drawingContext.DrawLine(pen, new Point(line[0].x, line[0].y), new Point(line[1].x, line[1].y));
             }
-            RemoveInside();
+        }
+
+        private void ConvexHull()
+        {
+            switch (_alg)
+            {
+                case "Jarvis":
+                    Jarvis();
+                    break;
+                case "ByDef":
+                    ByDef();
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        private void ByDef()
+        {
+            for (int i = 0; i < _shapes.Count - 1; i++)
+            {
+                for (int j = i + 1; j < _shapes.Count; j++)
+                {
+                    Shape p1 = _shapes[i];
+                    Shape p2 = _shapes[j];
+                    bool allAbove = true;
+                    bool allBelow = true;
+                    if (p1.y == p2.y)
+                    {
+                        for (int z = 0; z < _shapes.Count; z++)
+                        {
+                            if (z == i || z == j)
+                            {
+                                continue;
+                            }
+
+                            Shape point = _shapes[z];
+
+                            if (p1.y > point.y)
+                            {
+                                allBelow = false;
+                            }
+                            else if (p1.y < point.y)
+                            {
+                                allAbove = false;
+                            }
+                            else
+                            {
+                                allAbove = false;
+                                allBelow = false;
+                            }
+                        }
+                    }
+
+                    if (p1.x == p2.x)
+                    {
+                        for (int z = 0; z < _shapes.Count; z++)
+                        {
+                            if (z == i || z == j)
+                            {
+                                continue;
+                            }
+
+                            Shape point = _shapes[z];
+
+                            if (p1.x > point.x)
+                            {
+                                allBelow = false;
+                            }
+                            else if (p1.x < point.x)
+                            {
+                                allAbove = false;
+                            }
+                            else
+                            {
+                                allAbove = false;
+                                allBelow = false;
+                            }
+                        }
+                    }
+
+                    else
+                    {
+                        double k = ((double)p2.y - p1.y) / (p2.x - p1.x);
+                        double b = p1.y - k * p1.x;
+
+                        for (int z = 0; z < _shapes.Count; z++)
+                        {
+                            if (z == i || z == j)
+                            {
+                                continue;
+                            }
+
+                            Shape point = _shapes[z];
+                            double y2 = k * point.x + b;
+
+                            if (y2 > point.y)
+                            {
+                                allBelow = false;
+                            }
+                            else if (y2 < point.y)
+                            {
+                                allAbove = false;
+                            }
+                            else
+                            {
+                                allAbove = false;
+                                allBelow = false;
+                            }
+                        }
+                    }
+
+
+                    if (allAbove || allBelow)
+                    {
+                        p1.is_vertex = true;
+                        p2.is_vertex = true;
+                        _borders.Add([p1, p2]);
+                    }
+                }
+            }
         }
 
         private void Jarvis()
@@ -48,7 +173,7 @@ namespace AvaloniaApplication1
             int C = 0;
 
             Shape tempShape = new Triangle(_shapes[A].x + 100, _shapes[A].y);
-            C = FindCos(_shapes[A], tempShape);
+            C = NextShape(_shapes[A], tempShape);
 
             _borders.Add([_shapes[A], _shapes[C]]);
             _shapes[A].is_vertex = true;
@@ -59,7 +184,7 @@ namespace AvaloniaApplication1
             int index = 1;
             while (index < _shapes.Count)
             {
-                C = FindCos(_shapes[A], _shapes[B]);
+                C = NextShape(_shapes[A], _shapes[B]);
                 _shapes[C].is_vertex = true;
                 _borders.Add([_shapes[A], _shapes[C]]);
 
@@ -96,7 +221,7 @@ namespace AvaloniaApplication1
             return _shapes.IndexOf(A);
         }
 
-        private int FindCos(Shape A, Shape B)
+        private int NextShape(Shape A, Shape B)
         {
             double maxCos = 2;
             Shape point = null;
@@ -133,9 +258,6 @@ namespace AvaloniaApplication1
             return _shapes.IndexOf(point);
         }
 
-        
-        
-        
         public void LeftClick(int x, int y)
         {
             this.cx = x;
@@ -257,11 +379,20 @@ namespace AvaloniaApplication1
             {
                 shape.is_moving = false;
             }
+            if (_shapes.Count >= 3)
+            {
+                RemoveInside();
+            }
         }
 
         public void SetShape(string menuShape)
         {
             _shape = menuShape;
+        }
+
+        public void SetAlg(string menuAlg)
+        {
+            _alg = menuAlg;
         }
 
         private void RemoveInside()

@@ -9,22 +9,21 @@
 		PointerPressed="Window_PointerPressed"
 		PointerMoved="Window_PointerMoved"
 		PointerReleased="Window_PointerReleased">
-		<Grid>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="20"></RowDefinition>
-				<RowDefinition Height="150000000000"></RowDefinition>
-			</Grid.RowDefinitions>
-			<DockPanel>
-				<Menu DockPanel.Dock="Top">
-					<MenuItem Header="_Type">
-						<MenuItem Header="Triangle" Click="MenuClicked"/>
-						<Separator/>
-						<MenuItem Header="Circle" Click="MenuClicked"/>
-						<Separator/>
-						<MenuItem Header="Square" Click="MenuClicked"/>
-					</MenuItem>
-				</Menu>
-			</DockPanel>
-			<avaloniaapp:CustomControl Grid.Row="1" Name="myCC"/>
-		</Grid>
+		<DockPanel>
+			<Menu DockPanel.Dock="Top">
+				<MenuItem Header="_Type">
+					<MenuItem Header="ByDef" Click="AlgMenuClicked"/>
+					<Separator/>
+					<MenuItem Header="Jarvis" Click="AlgMenuClicked"/>
+				</MenuItem>
+				<MenuItem Header="_Type">
+					<MenuItem Header="Triangle" Click="MenuClicked"/>
+					<Separator/>
+					<MenuItem Header="Circle" Click="MenuClicked"/>
+					<Separator/>
+					<MenuItem Header="Square" Click="MenuClicked"/>
+				</MenuItem>
+			</Menu>
+			<avaloniaapp:CustomControl Name="myCC"/>
+		</DockPanel>
 </Window>

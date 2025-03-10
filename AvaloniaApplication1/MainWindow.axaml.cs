@@ -30,6 +30,18 @@ namespace AvaloniaApplication1
             }
         }
 
+        private void AlgMenuClicked(object? sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem menuItem)
+            {
+                string alg = menuItem.Header.ToString();
+                _menuClicked = true;
+                CustomControl cc = this.FindControl<CustomControl>("myCC");
+
+                cc.SetAlg(alg);
+            }
+        }
+
 
         private async void Window_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
