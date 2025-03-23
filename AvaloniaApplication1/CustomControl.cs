@@ -36,10 +36,6 @@ namespace AvaloniaApplication1
             }
 
             ConvexHull();
-            if (!_moving)
-            {
-                RemoveInside();
-            }
 
             foreach (Shape[] line in _borders)
             {
