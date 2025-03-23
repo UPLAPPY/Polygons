@@ -5,6 +5,8 @@ using Avalonia.Interactivity;
 using System.Threading.Tasks;
 using Avalonia.Input;
 using Avalonia.Rendering.Composition;
+using Tmds.DBus.Protocol;
+using Avalonia.Controls.Shapes;
 
 namespace AvaloniaApplication1
 {
@@ -22,26 +24,27 @@ namespace AvaloniaApplication1
         {
             if (sender is MenuItem menuItem)
             {
-                string shape = menuItem.Header.ToString();
                 _menuClicked = true;
                 CustomControl cc = this.FindControl<CustomControl>("myCC");
+
+                string mes = menuItem.Header.ToString();
+                if (mes == "Triangle" || mes == "Circle" || mes == "Square")
+                {
+                    cc.SetShape(mes);
+                }
+                else if (mes == "Jarvis" || mes == "ByDef")
+                {
+                    cc.SetAlg(mes);
+                }
+                else if (mes == "Radius")
+                {
+                    var window = new Window1();
+                    window.RC += cc.UpdateRadius;
+                    window.Show();
+                }
                 
-                cc.SetShape(shape);
             }
         }
-
-        private void AlgMenuClicked(object? sender, RoutedEventArgs e)
-        {
-            if (sender is MenuItem menuItem)
-            {
-                string alg = menuItem.Header.ToString();
-                _menuClicked = true;
-                CustomControl cc = this.FindControl<CustomControl>("myCC");
-
-                cc.SetAlg(alg);
-            }
-        }
-
 
         private async void Window_PointerPressed(object? sender, PointerPressedEventArgs e)
         {

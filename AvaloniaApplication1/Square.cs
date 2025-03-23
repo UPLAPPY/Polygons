@@ -16,13 +16,13 @@ namespace AvaloniaApplication1
 
         public override void Draw(DrawingContext dc, Pen pen, Brush brush)
         {
-            double delta = R * Math.Sqrt(2) / 2;
+            double delta = r * Math.Sqrt(2) / 2;
             dc.DrawRectangle(brush, pen, new Rect(new Point(x - delta, y - delta), new Size(2*delta, 2*delta)));
         }
 
         public override bool isInside(int xp, int yp)
         {
-            double delta = R * Math.Sqrt(2) / 2;
+            double delta = r * Math.Sqrt(2) / 2;
             if ((Math.Abs(x - xp) <= delta) & (Math.Abs(y - yp) <= delta)){
                 return true;
             }

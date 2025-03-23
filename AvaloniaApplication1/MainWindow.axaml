@@ -11,17 +11,22 @@
 		PointerReleased="Window_PointerReleased">
 		<DockPanel>
 			<Menu DockPanel.Dock="Top">
-				<MenuItem Header="_Type">
-					<MenuItem Header="ByDef" Click="AlgMenuClicked"/>
+				<MenuItem Header="Type">
+					<MenuItem Header="ByDef" Click="MenuClicked"/>
 					<Separator/>
-					<MenuItem Header="Jarvis" Click="AlgMenuClicked"/>
+					<MenuItem Header="Jarvis" Click="MenuClicked"/>
 				</MenuItem>
-				<MenuItem Header="_Type">
+				<MenuItem Header="Shape">
 					<MenuItem Header="Triangle" Click="MenuClicked"/>
 					<Separator/>
 					<MenuItem Header="Circle" Click="MenuClicked"/>
 					<Separator/>
 					<MenuItem Header="Square" Click="MenuClicked"/>
+				</MenuItem>
+				<MenuItem Header="Settings">
+					<MenuItem Header="Radius" Click="MenuClicked"/>
+					<Separator/>
+					<MenuItem Header="Color" Click="MenuClicked"/>
 				</MenuItem>
 			</Menu>
 			<avaloniaapp:CustomControl Name="myCC"/>

@@ -21,7 +21,7 @@ namespace AvaloniaApplication1
 
         public override bool isInside(int xp, int yp)
         {
-            if (Math.Pow(x - xp, 2) + Math.Pow(y - yp, 2) <= Math.Pow(R, 2))
+            if (Math.Pow(x - xp, 2) + Math.Pow(y - yp, 2) <= Math.Pow(r, 2))
             {
                 return true;
             }

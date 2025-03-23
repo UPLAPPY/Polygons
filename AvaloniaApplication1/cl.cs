@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls.Converters;
 using Avalonia.Controls.Shapes;
+using System.Diagnostics;
 
 namespace AvaloniaApplication1
 {
@@ -15,6 +16,7 @@ namespace AvaloniaApplication1
         private List<Shape[]> _borders = new List<Shape[]>();
         private string _shape = "Triangle";
         private string _alg = "Jarvis";
+        private bool _moving = false;
 
         private Pen pen = new Pen(Brushes.Green, 2, lineCap: PenLineCap.Square);
         private Brush brush = new SolidColorBrush(Colors.Green);
@@ -33,9 +35,11 @@ namespace AvaloniaApplication1
                 return;
             }
 
-
-
             ConvexHull();
+            if (!_moving)
+            {
+                RemoveInside();
+            }
 
             foreach (Shape[] line in _borders)
             {
@@ -166,6 +170,7 @@ namespace AvaloniaApplication1
 
         private void Jarvis()
         {
+            
             int constA = FindA();
             int A = constA;
 
@@ -303,7 +308,6 @@ namespace AvaloniaApplication1
                     }
                 }
             }
-
             InvalidateVisual();
         }
         public bool InsideShell(int x, int y)
@@ -332,9 +336,7 @@ namespace AvaloniaApplication1
             }
             return inside;
         }
-
-
-
+        
 
         public void RightClick(int x, int y)
         {
@@ -384,6 +386,13 @@ namespace AvaloniaApplication1
                 RemoveInside();
             }
         }
+
+        public void UpdateRadius(object? sender, RadiusEventArgs e)
+        {
+            Shape.r = e._r;
+            InvalidateVisual();
+        }
+
 
         public void SetShape(string menuShape)
         {

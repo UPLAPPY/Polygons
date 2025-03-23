@@ -13,7 +13,7 @@ namespace AvaloniaApplication1
     abstract class Shape
     {
         public int x, y;
-        protected static int r;
+        public static int r { get; set; }
         public bool is_moving = false;
         private int dx, dy;
         public bool is_vertex = false;
@@ -23,10 +23,6 @@ namespace AvaloniaApplication1
             this.x = x;
             this.y = y;
         } 
-        public int R
-        {
-            get => r;
-        }
         public int DX
         {
             get { return dx; }
@@ -41,7 +37,7 @@ namespace AvaloniaApplication1
 
         static Shape()
         {
-            r = 52;
+            r = 30;
         }
 
         public abstract void Draw(DrawingContext dc, Pen pen, Brush brush);
