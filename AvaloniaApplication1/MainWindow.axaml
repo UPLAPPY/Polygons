@@ -15,6 +15,8 @@
 					<MenuItem Header="ByDef" Click="MenuClicked"/>
 					<Separator/>
 					<MenuItem Header="Jarvis" Click="MenuClicked"/>
+					<Separator/>
+					<MenuItem Header="Chart" Click="MenuClicked"/>
 				</MenuItem>
 				<MenuItem Header="Shape">
 					<MenuItem Header="Triangle" Click="MenuClicked"/>

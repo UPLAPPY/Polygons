@@ -38,11 +38,17 @@ namespace AvaloniaApplication1
                 }
                 else if (mes == "Radius")
                 {
-                    var window = new Window1();
+                    var window = new Window1(Shape.r);
                     window.RC += cc.UpdateRadius;
+                    window.Activate();
                     window.Show();
+                    
                 }
-                
+                else if (mes == "Chart")
+                {
+                    var graphs = new Window2();
+                    graphs.Show();
+                }
             }
         }
 

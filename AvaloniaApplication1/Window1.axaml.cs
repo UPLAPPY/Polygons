@@ -8,9 +8,10 @@ namespace AvaloniaApplication1;
 
 public partial class Window1 : Window
 {
-    public Window1()
+    public Window1(int radius)
     {
         InitializeComponent();
+        slider.Value = radius;
     }
 
     public event RadiusChangedHandler RC;

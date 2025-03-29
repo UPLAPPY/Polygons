@@ -16,26 +16,25 @@ namespace AvaloniaApplication1
         private List<Shape[]> _borders = new List<Shape[]>();
         private string _shape = "Triangle";
         private string _alg = "Jarvis";
-        private bool _moving = false;
 
         private Pen pen = new Pen(Brushes.Green, 2, lineCap: PenLineCap.Square);
         private Brush brush = new SolidColorBrush(Colors.Green);
 
         public override void Render(DrawingContext drawingContext)
         {
-            _borders.Clear();
             foreach (Shape s in _shapes)
             {
                 s.Draw(drawingContext, pen, brush);
                 s.is_vertex = false;
             }
-
+            
             if (_shapes.Count < 3)
             {
                 return;
             }
 
             ConvexHull();
+            RemoveInside();
 
             foreach (Shape[] line in _borders)
             {
@@ -45,6 +44,7 @@ namespace AvaloniaApplication1
 
         private void ConvexHull()
         {
+            _borders.Clear();
             switch (_alg)
             {
                 case "Jarvis":
@@ -282,7 +282,7 @@ namespace AvaloniaApplication1
                     foreach (Shape s in _shapes)
                     {
                         s.is_moving = true;
-                        s.DX = cx - s.x; 
+                        s.DX = cx - s.x;
                         s.DY = cy - s.y;
                     }
                 }
@@ -377,10 +377,6 @@ namespace AvaloniaApplication1
             {
                 shape.is_moving = false;
             }
-            if (_shapes.Count >= 3)
-            {
-                RemoveInside();
-            }
         }
 
         public void UpdateRadius(object? sender, RadiusEventArgs e)
@@ -402,18 +398,13 @@ namespace AvaloniaApplication1
 
         private void RemoveInside()
         {
-            List<Shape> remove = new List<Shape>();
-            foreach (Shape polygon in _shapes)
+            List<Shape> remove = new List<Shape>(_shapes);
+            foreach (Shape polygon in remove)
             {
                 if (!polygon.is_vertex)
                 {
-                    remove.Add(polygon);
+                    _shapes.Remove(polygon);
                 }
-            }
-
-            foreach (Shape polygon in remove)
-            {
-                _shapes.Remove(polygon);
             }
         }
     }
