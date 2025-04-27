@@ -14,9 +14,9 @@ namespace AvaloniaApplication1
         {
         }
 
-        public override void Draw(DrawingContext dc, Pen pen, Brush brush)
+        public override void Draw(DrawingContext dc)
         {
-            dc.DrawEllipse(brush, pen, new Point(x, y), r, r);
+            dc.DrawEllipse(Brush, Pen, new Point(x, y), r, r);
         }
 
         public override bool isInside(int xp, int yp)

@@ -23,4 +23,13 @@
   <ItemGroup>
     <Folder Include="Shapes\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="GraphWindow.axaml.cs">
+      <DependentUpon>GraphWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="RadiusWindow.axaml.cs">
+      <DependentUpon>RadiusWindow.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>

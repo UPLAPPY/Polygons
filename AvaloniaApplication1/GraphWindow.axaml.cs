@@ -6,9 +6,9 @@ using System;
 
 namespace AvaloniaApplication1;
 
-public partial class Window2 : Window
+public partial class Graph : Window
 {
-    public Window2()
+    public Graph()
     {
         InitializeComponent();
         var graphControl = new GraphCustomControl();

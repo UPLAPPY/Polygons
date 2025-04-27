@@ -14,10 +14,10 @@ namespace AvaloniaApplication1
         {
         }
 
-        public override void Draw(DrawingContext dc, Pen pen, Brush brush)
+        public override void Draw(DrawingContext dc)
         {
             double delta = r * Math.Sqrt(2) / 2;
-            dc.DrawRectangle(brush, pen, new Rect(new Point(x - delta, y - delta), new Size(2*delta, 2*delta)));
+            dc.DrawRectangle(Brush, Pen, new Rect(new Point(x - delta, y - delta), new Size(2*delta, 2*delta)));
         }
 
         public override bool isInside(int xp, int yp)

@@ -18,7 +18,7 @@ namespace AvaloniaApplication1
         {
         }
 
-        public override void Draw(DrawingContext dc, Pen pen, Brush brush)
+        public override void Draw(DrawingContext dc)
         {
 
             point1 = new Point(x, y - r);
@@ -35,7 +35,7 @@ namespace AvaloniaApplication1
 
             PolylineGeometry geometry = new PolylineGeometry(points, true);
 
-            dc.DrawGeometry(brush, pen, geometry);
+            dc.DrawGeometry(Brush, Pen, geometry);
         }
 
         public override bool isInside(int xp, int yp)

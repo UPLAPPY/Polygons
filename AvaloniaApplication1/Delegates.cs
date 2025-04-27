@@ -1,10 +1,5 @@
-﻿using Avalonia.Interactivity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Avalonia;
+﻿using System;
+using Avalonia.Media;
 
 namespace AvaloniaApplication1
 {
@@ -16,6 +11,17 @@ namespace AvaloniaApplication1
         public RadiusEventArgs(int r = 30)
         {
             _r = r;
+        }
+    }
+
+    public delegate void ColorChangedHandler(object? sender, ColorEventArgs e);
+    public class ColorEventArgs : EventArgs
+    {
+        public Color Color { get; set; }
+
+        public ColorEventArgs(Color color)
+        {
+            Color = color;
         }
     }
 }

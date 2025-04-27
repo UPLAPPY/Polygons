@@ -11,24 +11,24 @@
 		PointerReleased="Window_PointerReleased">
 		<DockPanel>
 			<Menu DockPanel.Dock="Top">
-				<MenuItem Header="Type">
-					<MenuItem Header="ByDef" Click="MenuClicked"/>
+				<MenuItem Header="Type" PointerPressed="MenuClicked">
+					<MenuItem Header="ByDef" Click="ItemClicked"/>
 					<Separator/>
-					<MenuItem Header="Jarvis" Click="MenuClicked"/>
+					<MenuItem Header="Jarvis" Click="ItemClicked"/>
 					<Separator/>
-					<MenuItem Header="Chart" Click="MenuClicked"/>
+					<MenuItem Header="Chart" Click="ItemClicked"/>
 				</MenuItem>
-				<MenuItem Header="Shape">
-					<MenuItem Header="Triangle" Click="MenuClicked"/>
+				<MenuItem Header="Shape" PointerPressed="MenuClicked">
+					<MenuItem Header="Triangle" Click="ItemClicked"/>
 					<Separator/>
-					<MenuItem Header="Circle" Click="MenuClicked"/>
+					<MenuItem Header="Circle" Click="ItemClicked"/>
 					<Separator/>
-					<MenuItem Header="Square" Click="MenuClicked"/>
+					<MenuItem Header="Square" Click="ItemClicked"/>
 				</MenuItem>
-				<MenuItem Header="Settings">
-					<MenuItem Header="Radius" Click="MenuClicked"/>
+				<MenuItem Header="Settings" PointerPressed="MenuClicked">
+					<MenuItem Header="Radius" Click="ItemClicked"/>
 					<Separator/>
-					<MenuItem Header="Color" Click="MenuClicked"/>
+					<MenuItem Header="Color" Click="ItemClicked"/>
 				</MenuItem>
 			</Menu>
 			<avaloniaapp:CustomControl Name="myCC"/>

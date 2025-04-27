@@ -16,15 +16,13 @@ namespace AvaloniaApplication1
         private List<Shape[]> _borders = new List<Shape[]>();
         private string _shape = "Triangle";
         private string _alg = "Jarvis";
-
-        private Pen pen = new Pen(Brushes.Green, 2, lineCap: PenLineCap.Square);
-        private Brush brush = new SolidColorBrush(Colors.Green);
+        public bool _radiusOpened = false;
 
         public override void Render(DrawingContext drawingContext)
         {
             foreach (Shape s in _shapes)
             {
-                s.Draw(drawingContext, pen, brush);
+                s.Draw(drawingContext);
                 s.is_vertex = false;
             }
             
@@ -38,7 +36,7 @@ namespace AvaloniaApplication1
 
             foreach (Shape[] line in _borders)
             {
-                drawingContext.DrawLine(pen, new Point(line[0].x, line[0].y), new Point(line[1].x, line[1].y));
+                drawingContext.DrawLine(Shape.Pen, new Point(line[0].x, line[0].y), new Point(line[1].x, line[1].y));
             }
         }
 
@@ -382,6 +380,14 @@ namespace AvaloniaApplication1
         public void UpdateRadius(object? sender, RadiusEventArgs e)
         {
             Shape.r = e._r;
+            InvalidateVisual();
+        }
+
+        public void UpdateColor(object? sender, ColorEventArgs e)
+        {
+            Brush newBrush = new SolidColorBrush((Color)e.Color);
+            Shape.Brush = newBrush;
+            Shape.Pen = new Pen(newBrush, 3);
             InvalidateVisual();
         }
 
