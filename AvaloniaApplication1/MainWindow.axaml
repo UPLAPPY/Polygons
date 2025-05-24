@@ -11,6 +11,16 @@
 		PointerReleased="Window_PointerReleased">
 		<DockPanel>
 			<Menu DockPanel.Dock="Top">
+				<MenuItem Header="File" PointerPressed="MenuClicked">
+					<MenuItem Header="New" Click="ItemClicked"></MenuItem>
+					<Separator/>
+					<MenuItem Header="Open" Click="ItemClicked"/>
+					<Separator/>
+					<MenuItem Header="Save" Click="ItemClicked"/>
+					<MenuItem Header="Save as" Click="ItemClicked"/>
+					<Separator/>
+					<MenuItem Header="Exit" Click="ItemClicked"/>
+				</MenuItem>
 				<MenuItem Header="Type" PointerPressed="MenuClicked">
 					<MenuItem Header="ByDef" Click="ItemClicked"/>
 					<Separator/>

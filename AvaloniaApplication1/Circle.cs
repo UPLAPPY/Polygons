@@ -1,13 +1,10 @@
 ﻿using Avalonia.Media;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Avalonia;
 
 namespace AvaloniaApplication1
 {
+    [Serializable]
     class Circle : Shape
     {
         public Circle(int x, int y) : base(x, y)

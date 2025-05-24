@@ -7,18 +7,35 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using SkiaSharp;
+using System.Text.Json.Serialization;
 
 namespace AvaloniaApplication1
 {
+    [JsonDerivedType(typeof(Circle), "Circle")]
+    [JsonDerivedType(typeof(Square), "Square")]
+    [JsonDerivedType(typeof(Triangle), "Triangle")]
     abstract class Shape
     {
-        public int x, y;
-        public static int r { get; set; }
+        [JsonInclude]
+        public int x;
+        [JsonInclude]
+        public int y;
+        [JsonInclude]
+        public static Brush Brush = new SolidColorBrush(Colors.Green);
+        [JsonInclude]
+        public static int r;
+
+        static Pen pen;
         public bool is_moving = false;
         private int dx, dy;
         public bool is_vertex = false;
-        static Pen pen;
-        static Brush brush = new SolidColorBrush(Colors.Green);
+        
+        public static int R
+        {
+            get; 
+            set;
+        }
+        
         public static Pen Pen
         {
             get => pen;
@@ -44,18 +61,8 @@ namespace AvaloniaApplication1
 
         static Shape()
         {
-            pen = new Pen(brush, 3);
+            pen = new Pen(Brush, 3);
             r = 30;
-        }
-
-        public static Brush Brush
-        {
-            get => brush;
-            set
-            {
-                brush = value;
-                pen = new Pen(brush, 3);
-            }
         }
 
         public abstract void Draw(DrawingContext dc);

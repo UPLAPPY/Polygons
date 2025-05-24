@@ -3,9 +3,11 @@ using Avalonia.Media;
 using System;
 using System.Collections.Generic;
 using Avalonia;
-using Avalonia.Controls.Converters;
-using Avalonia.Controls.Shapes;
-using System.Diagnostics;
+using System.IO;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Avalonia.Platform.Storage;
+
 
 namespace AvaloniaApplication1
 {
@@ -16,7 +18,6 @@ namespace AvaloniaApplication1
         private List<Shape[]> _borders = new List<Shape[]>();
         private string _shape = "Triangle";
         private string _alg = "Jarvis";
-        public bool _radiusOpened = false;
 
         public override void Render(DrawingContext drawingContext)
         {
@@ -331,7 +332,6 @@ namespace AvaloniaApplication1
             return inside;
         }
         
-
         public void RightClick(int x, int y)
         {
             _shapes.Reverse();
@@ -352,8 +352,6 @@ namespace AvaloniaApplication1
 
             InvalidateVisual();
         }
-
-
 
         public void Drag(int x, int y)
         {
@@ -391,7 +389,6 @@ namespace AvaloniaApplication1
             InvalidateVisual();
         }
 
-
         public void SetShape(string menuShape)
         {
             _shape = menuShape;
@@ -412,6 +409,64 @@ namespace AvaloniaApplication1
                     _shapes.Remove(polygon);
                 }
             }
+        }
+
+        public void SetNewFile()
+        {
+            _shapes = [];
+            _borders = [];
+            _shape = "Triangle";
+            _alg = "Jarvis";
+            Shape.r = 30;
+            Shape.Brush = new SolidColorBrush(Colors.Green);
+        }
+
+        public void Save(string filePath)
+        {
+            using FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+            using StreamWriter writer = new StreamWriter(fs);
+            var options = new JsonSerializerOptions { WriteIndented = true };
+
+            Color brushColor = (Shape.Brush as SolidColorBrush)?.Color ?? Colors.Green;
+            SaveData saveData = new SaveData(_shapes, Shape.r, brushColor);
+            string json = JsonSerializer.Serialize(saveData, options);
+
+            writer.Write(json);
+        }
+
+        public void Load(string filePath)
+        {
+            SetNewFile();
+
+            using FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            using StreamReader reader = new StreamReader(fs);
+            var options = new JsonSerializerOptions { WriteIndented = true};
+
+            string json = reader.ReadToEnd();
+            SaveData LoadData = JsonSerializer.Deserialize<SaveData>(json, options);
+            Shape.r = LoadData.SaveR;
+            Color color = Color.FromArgb(LoadData.A, LoadData.R, LoadData.G, LoadData.B);
+            Shape.Brush = new SolidColorBrush(color);
+            Shape.Pen = new Pen(Shape.Brush, 3);
+            List<Shape> newShapes = new List<Shape>();
+            foreach (Shape shape in LoadData.SaveShapes)
+            {
+                if (shape.GetType().Name == "Triangle")
+                {
+                    newShapes.Add(new Triangle(shape.x, shape.y));
+                }
+                else if (shape.GetType().Name == "Circle")
+                {
+                    newShapes.Add(new Circle(shape.x, shape.y));
+                }
+                else
+                {
+                    newShapes.Add(new Square(shape.x, shape.y));
+                }
+            }
+            _shapes = newShapes;
+
+            InvalidateVisual();
         }
     }
 }

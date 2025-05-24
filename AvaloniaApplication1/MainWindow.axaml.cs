@@ -4,6 +4,8 @@ using System;
 using Avalonia.Interactivity;
 using Avalonia.Input;
 using Avalonia.Controls.ApplicationLifetimes;
+using System.Threading.Tasks;
+using Avalonia.Platform.Storage;
 
 
 namespace AvaloniaApplication1
@@ -11,7 +13,11 @@ namespace AvaloniaApplication1
     public partial class MainWindow : Window
     {
 
-        bool _menuClicked = false;
+        private bool _menuClicked = false;
+        private bool _saved = true;
+        private string _saveFilePath = null;
+        private string _loadFilePath = null;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -22,7 +28,7 @@ namespace AvaloniaApplication1
             _menuClicked = true;
         }
 
-        private void ItemClicked(object? sender, RoutedEventArgs e)
+        private async void ItemClicked(object? sender, RoutedEventArgs e)
         {
             if (sender is MenuItem menuItem)
             {
@@ -93,10 +99,94 @@ namespace AvaloniaApplication1
                         radiusWindow.Activate();
                     }
                 }
+                else if (mes == "New")
+                {
+                    string _result = "NoResult";
+                    if (!_saved)
+                    {
+                        _result = await AskToSave();
+
+                        if (_result == "Save")
+                        {
+                            if (_saveFilePath == null)
+                            {
+                                _saveFilePath = await SelectFile();
+                            }
+                            _saved = true;
+                            if (_saveFilePath == null) { return; }
+                            cc.Save(_saveFilePath);
+                            cc.SetNewFile();
+                        }
+                        else if (_result == "DontSave")
+                        {
+                            cc.SetNewFile();
+                            _saveFilePath = null;
+                            _saved = true;
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        cc.SetNewFile();
+                        _saveFilePath = null;
+                        _saved = true;
+                    }
+                }
+                else if (mes == "Save")
+                {
+                    if (_saveFilePath == null)
+                    {
+                        _saveFilePath = await SelectFile();
+                    }
+                    if (_saveFilePath == null) { return; }
+                    _saved = true;
+                    cc.Save(_saveFilePath);
+                }
+                else if (mes == "Save As")
+                {
+                    _saveFilePath = await SelectFile();
+                    if (_saveFilePath == null) { return; }
+                    _saved = true;
+                    cc.Save(_saveFilePath);
+                }
+                else if (mes == "Open")
+                {
+                    string _result = "NoResult";
+                    if (!_saved)
+                    {
+                        _result = await AskToSave();
+
+                        if (_result == "Save")
+                        {
+                            if (_saveFilePath == null)
+                            {
+                                _saveFilePath = await SelectFile();
+                            }
+                            if (_saveFilePath == null) { return; }
+                            _saved = true;
+                            cc.Save(_saveFilePath);
+                        }
+                        else if (_result != "null")
+                        {
+                            _loadFilePath = await SelectFile();
+                            if (_loadFilePath == null) { return; }
+                            cc.Load(_loadFilePath);
+                        }
+                    }
+                    else
+                    {
+                        _loadFilePath = await SelectFile();
+                        if (_loadFilePath == null) { return; }
+                        cc.Load(_loadFilePath);
+                    }
+                }
             }
         }
 
-        private async void Window_PointerPressed(object? sender, PointerPressedEventArgs e)
+        private void Window_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
             if (_menuClicked)
             {
@@ -107,10 +197,12 @@ namespace AvaloniaApplication1
             CustomControl CC = this.Find<CustomControl>("myCC");
             if (e.GetCurrentPoint(CC).Properties.IsRightButtonPressed)
             {
+                _saved = false;
                 CC.RightClick(Convert.ToInt32(e.GetPosition(CC).X), Convert.ToInt32(e.GetPosition(CC).Y));
             }
             else
             {
+                _saved = false;
                 CC.LeftClick(Convert.ToInt32(e.GetPosition(CC).X), Convert.ToInt32(e.GetPosition(CC).Y));
             }
         }
@@ -138,6 +230,33 @@ namespace AvaloniaApplication1
                 }
             }
             return null;
+        }
+
+        private async Task<string> AskToSave()
+        {
+            UnsavedChangesWindow unsavedChangesWindow = new UnsavedChangesWindow();
+            var result = await unsavedChangesWindow.ShowDialog<string>(this);
+            return result;
+        }
+
+        private async Task<string> SelectFile()
+        {
+            var topLevel = GetTopLevel(this);
+            CustomControl CC = this.Find<CustomControl>("myCC");
+
+            var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                Title = "Select File"
+            });
+
+            if (file == null)
+            {
+                return null;
+            }
+            else
+            {
+                return file.Path.AbsolutePath.ToString();
+            }
         }
     }
 }

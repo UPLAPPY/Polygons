@@ -1,0 +1,38 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:avaloniaapp="clr-namespace:AvaloniaApplication1"
+		mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="200"
+        x:Class="AvaloniaApplication1.UnsavedChangesWindow"
+        Title="Save Changes?"
+        WindowStartupLocation="CenterOwner"
+        Width="400" Height="200"
+        CanResize="False">
+    
+    <StackPanel Margin="20" Spacing="20">
+        <TextBlock Text="Do you want to save changes?" 
+                 FontSize="16"
+                 HorizontalAlignment="Center"
+                 VerticalAlignment="Center"/>
+        
+        <StackPanel Orientation="Horizontal" 
+                    HorizontalAlignment="Center" 
+                    Spacing="10"
+                    VerticalAlignment="Bottom"
+                    Margin="0,40,0,0">
+            <Button Name="SaveButton"
+                    Content="Save"
+                    Width="100"
+					Click="SaveButton_Pressed"/>
+            <Button Name="DontSaveButton"
+                    Content="Don't Save"
+                    Width="100"
+					Click="NotSaveButton_Pressed"/>
+            <Button Name="CancelButton"
+                    Content="Cancel"
+                    Width="100"
+					Click="CancelButton_Pressed"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

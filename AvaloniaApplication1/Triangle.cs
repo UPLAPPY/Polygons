@@ -9,6 +9,7 @@ using Avalonia.Media;
 
 namespace AvaloniaApplication1
 {
+    [Serializable]
     class Triangle : Shape
     {
         private Point point1, point2, point3;
@@ -20,7 +21,6 @@ namespace AvaloniaApplication1
 
         public override void Draw(DrawingContext dc)
         {
-
             point1 = new Point(x, y - r);
             point2 = new Point(x + (r / 2 * Math.Sqrt(3)), y + r / 2);
             point3 = new Point(x - (r / 2 * Math.Sqrt(3)), y + r / 2);
