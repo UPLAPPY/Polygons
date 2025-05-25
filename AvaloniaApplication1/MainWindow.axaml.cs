@@ -6,6 +6,8 @@ using Avalonia.Input;
 using Avalonia.Controls.ApplicationLifetimes;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
+using System.Runtime.CompilerServices;
+using System.Linq;
 
 
 namespace AvaloniaApplication1
@@ -15,12 +17,16 @@ namespace AvaloniaApplication1
 
         private bool _menuClicked = false;
         private bool _saved = true;
-        private string _saveFilePath = null;
-        private string _loadFilePath = null;
+        private string _filePath = null;
 
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Window_Closed(object? sender, EventArgs e)
+        {
+            CloseAll();
         }
 
         private void MenuClicked(object? sender, PointerPressedEventArgs e)
@@ -108,19 +114,19 @@ namespace AvaloniaApplication1
 
                         if (_result == "Save")
                         {
-                            if (_saveFilePath == null)
+                            if (_filePath == null)
                             {
-                                _saveFilePath = await SelectFile();
+                                _filePath = await SelectFile();
                             }
                             _saved = true;
-                            if (_saveFilePath == null) { return; }
-                            cc.Save(_saveFilePath);
+                            if (_filePath == null) { return; }
+                            cc.Save(_filePath);
                             cc.SetNewFile();
                         }
                         else if (_result == "DontSave")
                         {
                             cc.SetNewFile();
-                            _saveFilePath = null;
+                            _filePath = null;
                             _saved = true;
                         }
                         else
@@ -131,26 +137,26 @@ namespace AvaloniaApplication1
                     else
                     {
                         cc.SetNewFile();
-                        _saveFilePath = null;
+                        _filePath = null;
                         _saved = true;
                     }
                 }
                 else if (mes == "Save")
                 {
-                    if (_saveFilePath == null)
+                    if (_filePath == null)
                     {
-                        _saveFilePath = await SelectFile();
+                        _filePath = await SelectFile();
                     }
-                    if (_saveFilePath == null) { return; }
+                    if (_filePath == null) { return; }
                     _saved = true;
-                    cc.Save(_saveFilePath);
+                    cc.Save(_filePath);
                 }
-                else if (mes == "Save As")
+                else if (mes == "Save as")
                 {
-                    _saveFilePath = await SelectFile();
-                    if (_saveFilePath == null) { return; }
+                    _filePath = await SelectFile();
+                    if (_filePath == null) { return; }
                     _saved = true;
-                    cc.Save(_saveFilePath);
+                    cc.Save(_filePath);
                 }
                 else if (mes == "Open")
                 {
@@ -161,29 +167,63 @@ namespace AvaloniaApplication1
 
                         if (_result == "Save")
                         {
-                            if (_saveFilePath == null)
+                            if (_filePath == null)
                             {
-                                _saveFilePath = await SelectFile();
+                                _filePath = await SelectFile();
                             }
-                            if (_saveFilePath == null) { return; }
+                            if (_filePath == null) { return; }
                             _saved = true;
-                            cc.Save(_saveFilePath);
+                            cc.Save(_filePath);
+
+                            _filePath = await SelectFile();
+                            if (_filePath == null) { return; }
+                            cc.Load(_filePath);
                         }
-                        else if (_result != "null")
+                        else if (_result == "DontSave")
                         {
-                            _loadFilePath = await SelectFile();
-                            if (_loadFilePath == null) { return; }
-                            cc.Load(_loadFilePath);
+                            _filePath = await SelectFile();
+                            if (_filePath == null) { return; }
+                            cc.Load(_filePath);
                         }
                     }
                     else
                     {
-                        _loadFilePath = await SelectFile();
-                        if (_loadFilePath == null) { return; }
-                        cc.Load(_loadFilePath);
+                        _filePath = await SelectFile();
+                        if (_filePath == null) { return; }
+                        cc.Load(_filePath);
                     }
                 }
+                else if (mes == "Exit")
+                {
+                    string _result = "NoResult";
+                    if (!_saved)
+                    {
+                        _result = await AskToSave();
+
+                        if (_result == "Save")
+                        {
+                            if (_filePath == null)
+                            {
+                                _filePath = await SelectFile();
+                            }
+                            if (_filePath == null) { return; }
+                            _saved = true;
+                            cc.Save(_filePath);
+                            CloseAll();
+                        }
+                        else if (_result == "DontSave")
+                        {
+                            CloseAll();
+                        }
+                    }
+                    else
+                    {
+                        CloseAll();
+                    }
+                }
+                _menuClicked = false;
             }
+
         }
 
         private void Window_PointerPressed(object? sender, PointerPressedEventArgs e)
@@ -242,7 +282,6 @@ namespace AvaloniaApplication1
         private async Task<string> SelectFile()
         {
             var topLevel = GetTopLevel(this);
-            CustomControl CC = this.Find<CustomControl>("myCC");
 
             var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
@@ -256,6 +295,15 @@ namespace AvaloniaApplication1
             else
             {
                 return file.Path.AbsolutePath.ToString();
+            }
+        }
+
+        private void CloseAll()
+        {
+            var windows = ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).Windows.ToList();
+            foreach (var window in windows)
+            {
+                window.Close();
             }
         }
     }
