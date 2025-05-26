@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using Avalonia;
 using System.IO;
 using System.Text.Json;
-using System.Threading.Tasks;
-using Avalonia.Platform.Storage;
+using Avalonia.Threading;
+using System.Timers;
 
 
 namespace AvaloniaApplication1
@@ -18,6 +18,7 @@ namespace AvaloniaApplication1
         private List<Shape[]> _borders = new List<Shape[]>();
         private string _shape = "Triangle";
         private string _alg = "Jarvis";
+        private Timer timer = new Timer(50);
 
         public override void Render(DrawingContext drawingContext)
         {
@@ -465,8 +466,33 @@ namespace AvaloniaApplication1
                 }
             }
             _shapes = newShapes;
-
             InvalidateVisual();
+        }
+
+        public void StartDynamic()
+        {
+            timer.Elapsed += Tick;
+            timer.Start();
+        }
+
+        private void Tick(object? sender, ElapsedEventArgs e)
+        {
+            Random random = new Random();
+            foreach (Shape shape in _shapes)
+            {
+                if (!shape.is_moving)
+                {
+                    shape.x += random.Next(-1, 2);
+                    shape.y += random.Next(-1, 2);
+                }
+            }
+
+            Dispatcher.UIThread.Invoke(InvalidateVisual);
+        }
+
+        public void StopDynamic()
+        {
+            timer.Stop();
         }
     }
 }

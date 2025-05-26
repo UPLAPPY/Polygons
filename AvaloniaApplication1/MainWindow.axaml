@@ -41,6 +41,8 @@
 					<Separator/>
 					<MenuItem Header="Color" Click="ItemClicked"/>
 				</MenuItem>
+				<Button Click="StartClicked">Start</Button>
+				<Button Click="StopClicked">Stop</Button>
 			</Menu>
 			<avaloniaapp:CustomControl Name="myCC"/>
 		</DockPanel>

@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using System.Runtime.CompilerServices;
 using System.Linq;
+using System.Timers;
+using System.IO;
 
 
 namespace AvaloniaApplication1
@@ -24,7 +26,19 @@ namespace AvaloniaApplication1
             InitializeComponent();
         }
 
-        private void Window_Closed(object? sender, EventArgs e)
+        private void StartClicked(object? sender, RoutedEventArgs e)
+        {
+            CustomControl cc = this.FindControl<CustomControl>("myCC");
+            cc.StartDynamic();
+        }
+
+        public void StopClicked(object? sender, RoutedEventArgs e)
+        {
+            CustomControl cc = this.FindControl<CustomControl>("myCC");
+            cc.StopDynamic();
+        }
+
+        public void Window_Closed(object? sender, EventArgs e)
         {
             CloseAll();
         }
@@ -116,7 +130,7 @@ namespace AvaloniaApplication1
                         {
                             if (_filePath == null)
                             {
-                                _filePath = await SelectFile();
+                                _filePath = await SelectFile("Save");
                             }
                             _saved = true;
                             if (_filePath == null) { return; }
@@ -145,7 +159,7 @@ namespace AvaloniaApplication1
                 {
                     if (_filePath == null)
                     {
-                        _filePath = await SelectFile();
+                        _filePath = await SelectFile("Save");
                     }
                     if (_filePath == null) { return; }
                     _saved = true;
@@ -153,7 +167,7 @@ namespace AvaloniaApplication1
                 }
                 else if (mes == "Save as")
                 {
-                    _filePath = await SelectFile();
+                    _filePath = await SelectFile("Save");
                     if (_filePath == null) { return; }
                     _saved = true;
                     cc.Save(_filePath);
@@ -169,26 +183,26 @@ namespace AvaloniaApplication1
                         {
                             if (_filePath == null)
                             {
-                                _filePath = await SelectFile();
+                                _filePath = await SelectFile("Save");
                             }
                             if (_filePath == null) { return; }
                             _saved = true;
                             cc.Save(_filePath);
 
-                            _filePath = await SelectFile();
+                            _filePath = await SelectFile("Open");
                             if (_filePath == null) { return; }
                             cc.Load(_filePath);
                         }
                         else if (_result == "DontSave")
                         {
-                            _filePath = await SelectFile();
+                            _filePath = await SelectFile("Open");
                             if (_filePath == null) { return; }
                             cc.Load(_filePath);
                         }
                     }
                     else
                     {
-                        _filePath = await SelectFile();
+                        _filePath = await SelectFile("Open");
                         if (_filePath == null) { return; }
                         cc.Load(_filePath);
                     }
@@ -204,7 +218,7 @@ namespace AvaloniaApplication1
                         {
                             if (_filePath == null)
                             {
-                                _filePath = await SelectFile();
+                                _filePath = await SelectFile("Save");
                             }
                             if (_filePath == null) { return; }
                             _saved = true;
@@ -279,22 +293,41 @@ namespace AvaloniaApplication1
             return result;
         }
 
-        private async Task<string> SelectFile()
+        private async Task<string> SelectFile(string type)
         {
             var topLevel = GetTopLevel(this);
 
-            var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            if (type == "Save")
             {
-                Title = "Select File"
-            });
+                var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+                {
+                    Title = "Save File"
+                });
 
-            if (file == null)
-            {
-                return null;
+                if (file == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return file.Path.AbsolutePath.ToString();
+                }
             }
             else
             {
-                return file.Path.AbsolutePath.ToString();
+                var file = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+                {
+                    Title = "Open File"
+                });
+
+                if (file == null || file.Count == 0)
+                {
+                    return null;
+                }
+                else
+                {
+                    return file[0].Path.AbsolutePath.ToString();
+                }
             }
         }
 
