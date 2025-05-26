@@ -1,7 +1,5 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using System;
 
 namespace AvaloniaApplication1;
@@ -18,9 +16,15 @@ public partial class Window1 : Window
 
     private void SliderValueChanged(object sender, RoutedEventArgs e)
     {
+        
         if (RC != null)
         {
             RC(this, new RadiusEventArgs(Convert.ToInt32(slider.Value)));
         }
+    }
+
+    public void UpdateRadius(int r)
+    {
+        slider.Value = r;
     }
 }

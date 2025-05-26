@@ -6,10 +6,7 @@ using Avalonia.Input;
 using Avalonia.Controls.ApplicationLifetimes;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
-using System.Runtime.CompilerServices;
 using System.Linq;
-using System.Timers;
-using System.IO;
 
 
 namespace AvaloniaApplication1
@@ -65,21 +62,21 @@ namespace AvaloniaApplication1
                 }
                 else if (mes == "Radius")
                 {
-                    var graphWindow = FindWindow<Window1>();
-                    if (graphWindow == null)
+                    Window1 radiusWindow = FindWindow<Window1>();
+                    if (radiusWindow == null)
                     {
-                        graphWindow = new Window1(Shape.r);
-                        graphWindow.RC += cc.UpdateRadius;
-                        graphWindow.Show();
+                        radiusWindow = new Window1(Shape.r);
+                        radiusWindow.RC += cc.UpdateRadius;
+                        radiusWindow.Show();
                     }
                     else
                     {
-                        if (graphWindow.WindowState == WindowState.Minimized)
+                        if (radiusWindow.WindowState == WindowState.Minimized)
                         {
-                            graphWindow.WindowState = WindowState.Normal;
+                            radiusWindow.WindowState = WindowState.Normal;
                         }
-                        graphWindow.Show();
-                        graphWindow.Activate();
+                        radiusWindow.Show();
+                        radiusWindow.Activate();
                     }
                 }
                 else if (mes == "Chart")
@@ -102,8 +99,8 @@ namespace AvaloniaApplication1
                 }
                 else if (mes == "Color")
                 {
-                    var radiusWindow = FindWindow<ColorWindow>();
-                    if (radiusWindow == null)
+                    var colorWindow = FindWindow<ColorWindow>();
+                    if (colorWindow == null)
                     {
                         var color = new ColorWindow();
                         color.CC += cc.UpdateColor;
@@ -111,12 +108,12 @@ namespace AvaloniaApplication1
                     }
                     else
                     {
-                        if (radiusWindow.WindowState == WindowState.Minimized)
+                        if (colorWindow.WindowState == WindowState.Minimized)
                         {
-                            radiusWindow.WindowState = WindowState.Normal;
+                            colorWindow.WindowState = WindowState.Normal;
                         }
-                        radiusWindow.Show();
-                        radiusWindow.Activate();
+                        colorWindow.Show();
+                        colorWindow.Activate();
                     }
                 }
                 else if (mes == "New")
@@ -130,18 +127,20 @@ namespace AvaloniaApplication1
                         {
                             if (_filePath == null)
                             {
-                                _filePath = await SelectFile("Save");
+                                _filePath = await SelectSaveFile();
                             }
-                            _saved = true;
                             if (_filePath == null) { return; }
+                            _saved = true;
                             cc.Save(_filePath);
                             cc.SetNewFile();
+                            CloseLoad();
                         }
                         else if (_result == "DontSave")
                         {
                             cc.SetNewFile();
                             _filePath = null;
                             _saved = true;
+                            CloseLoad();
                         }
                         else
                         {
@@ -153,13 +152,14 @@ namespace AvaloniaApplication1
                         cc.SetNewFile();
                         _filePath = null;
                         _saved = true;
+                        CloseLoad();
                     }
                 }
                 else if (mes == "Save")
                 {
                     if (_filePath == null)
                     {
-                        _filePath = await SelectFile("Save");
+                        _filePath = await SelectSaveFile();
                     }
                     if (_filePath == null) { return; }
                     _saved = true;
@@ -167,7 +167,7 @@ namespace AvaloniaApplication1
                 }
                 else if (mes == "Save as")
                 {
-                    _filePath = await SelectFile("Save");
+                    _filePath = await SelectSaveFile();
                     if (_filePath == null) { return; }
                     _saved = true;
                     cc.Save(_filePath);
@@ -183,28 +183,31 @@ namespace AvaloniaApplication1
                         {
                             if (_filePath == null)
                             {
-                                _filePath = await SelectFile("Save");
+                                _filePath = await SelectSaveFile();
                             }
                             if (_filePath == null) { return; }
                             _saved = true;
                             cc.Save(_filePath);
 
-                            _filePath = await SelectFile("Open");
+                            _filePath = await SelectOpenFile();
                             if (_filePath == null) { return; }
                             cc.Load(_filePath);
+                            CloseLoad();
                         }
                         else if (_result == "DontSave")
                         {
-                            _filePath = await SelectFile("Open");
+                            _filePath = await SelectOpenFile();
                             if (_filePath == null) { return; }
                             cc.Load(_filePath);
+                            CloseLoad();
                         }
                     }
                     else
                     {
-                        _filePath = await SelectFile("Open");
+                        _filePath = await SelectOpenFile();
                         if (_filePath == null) { return; }
                         cc.Load(_filePath);
+                        CloseLoad();
                     }
                 }
                 else if (mes == "Exit")
@@ -218,7 +221,7 @@ namespace AvaloniaApplication1
                         {
                             if (_filePath == null)
                             {
-                                _filePath = await SelectFile("Save");
+                                _filePath = await SelectSaveFile();
                             }
                             if (_filePath == null) { return; }
                             _saved = true;
@@ -235,9 +238,22 @@ namespace AvaloniaApplication1
                         CloseAll();
                     }
                 }
-                _menuClicked = false;
             }
+            _menuClicked = false;
+        }
 
+        private void CloseLoad()
+        {
+            var radiusWindow = FindWindow<Window1>();
+            if (radiusWindow != null)
+            {
+                radiusWindow.Close();
+            }
+            var colorWindow = FindWindow<ColorWindow>();
+            if (colorWindow != null)
+            {
+                colorWindow.Close();
+            }
         }
 
         private void Window_PointerPressed(object? sender, PointerPressedEventArgs e)
@@ -290,44 +306,43 @@ namespace AvaloniaApplication1
         {
             UnsavedChangesWindow unsavedChangesWindow = new UnsavedChangesWindow();
             var result = await unsavedChangesWindow.ShowDialog<string>(this);
+            _menuClicked = false;
             return result;
         }
 
-        private async Task<string> SelectFile(string type)
+        private async Task<string> SelectSaveFile()
         {
             var topLevel = GetTopLevel(this);
-
-            if (type == "Save")
+            var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
-                var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
-                {
-                    Title = "Save File"
-                });
+                Title = "Save File"
+            });
 
-                if (file == null)
-                {
-                    return null;
-                }
-                else
-                {
-                    return file.Path.AbsolutePath.ToString();
-                }
+            if (file == null)
+            {
+                return null;
             }
             else
             {
-                var file = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-                {
-                    Title = "Open File"
-                });
+                return file.Path.AbsolutePath.ToString();
+            }
+        }
 
-                if (file == null || file.Count == 0)
-                {
-                    return null;
-                }
-                else
-                {
-                    return file[0].Path.AbsolutePath.ToString();
-                }
+        private async Task<string> SelectOpenFile()
+        {
+            var topLevel = GetTopLevel(this);
+            var file = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = "Open File"
+            });
+
+            if (file == null || file.Count == 0)
+            {
+                return null;
+            }
+            else
+            {
+                return file[0].Path.AbsolutePath.ToString();
             }
         }
 
